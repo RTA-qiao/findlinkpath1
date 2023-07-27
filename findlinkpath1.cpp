@@ -40,7 +40,8 @@ int main() {
 	Open_dir(findelpkeypath , exelinkfikename , openlinkfile);
 	if (SUCCEEDED(ResolveIt(NULL , openlinkfile , openlinktruepath , MAX_PATH))) {
 	}
-	wprintf(L"找到真实地址为  %s \n" , openlinktruepath);
+
+	wprintf(L" true path = %s \n" , openlinktruepath);
 	return 0;
 }
 
@@ -70,7 +71,7 @@ HRESULT ResolveIt(HWND hwnd , LPTSTR lpszLinkFile , LPTSTR lpszPath , int iPathB
 				{
 					hres = psl->GetPath(szGotPath , MAX_PATH , (WIN32_FIND_DATA*)&wfd , SLGP_SHORTPATH);
 					_tcscpy_s(lpszPath , _tcslen(szGotPath) + 2 , szGotPath);
-					wprintf(L"path %s \n" , szGotPath);
+					//wprintf(L"path %s \n" , szGotPath);
 				}
 			}
 			ppf->Release();
@@ -87,11 +88,16 @@ BOOL Open_dir(LPTSTR lpdirPath , LPTSTR exename , LPTSTR ALLpath) {
 	WIN32_FIND_DATA	findFiledata;
 	HANDLE hListFile;
 	TCHAR szFilepath[MAX_PATH] = { 0 };
+	TCHAR sztempath[MAX_PATH] = { 0 };
 	_tcscpy_s(szFilepath , lpdirPath);
-	//wprintf(L"szFilepath =  %s \n" , szFilepath);
 	_tcscat_s(szFilepath , L"\\");
-	_tcscat_s(szFilepath , exename);
-	wprintf(L"link file %s \n" , szFilepath);
+	_tcscat_s(szFilepath , L"*");
+
+	_tcscpy_s(sztempath , lpdirPath);
+	//wprintf(L"szFilepath =  %s \n" , szFilepath);
+	_tcscat_s(sztempath , L"\\");
+	_tcscat_s(sztempath , exename);
+	//wprintf(L"link file %s \n" , szFilepath);
 	//MessageBox(NULL , szFilepath , L"HELLO" , MB_OK);
 	hListFile = FindFirstFile(szFilepath , &findFiledata);
 	if (hListFile == INVALID_HANDLE_VALUE) {
@@ -103,10 +109,10 @@ BOOL Open_dir(LPTSTR lpdirPath , LPTSTR exename , LPTSTR ALLpath) {
 			if (lstrcmp(findFiledata.cFileName , L".") == 0 || lstrcmp(findFiledata.cFileName , L"..") == 0) {
 				continue;
 			}
-			if (lstrcmp(exename , findFiledata.cFileName) == 0) {
-				_tcscpy_s(ALLpath , _tcslen(szFilepath) + 2 , szFilepath);
+			if (lstrcmp(exename, findFiledata.cFileName) == 0) {
+				_tcscpy_s(ALLpath , _tcslen(sztempath) + 2 , sztempath);
 			}
-			wprintf(L"%s\n" , findFiledata.cFileName);
+			wprintf(L"enum.lnk ==== %s\n" , findFiledata.cFileName);
 		} while (FindNextFile(hListFile , &findFiledata));
 	}
 	return true;
