@@ -127,7 +127,6 @@ BOOL GetRegValue(HKEY findregkey , LPTSTR regkeyname , LPTSTR keyvle) {
 	return false;
 }
 
-
 BOOL findRegKey(HKEY rootHkey , LPTSTR regPath , LPTSTR lpkeyname , LPTSTR findkokeyname , LPTSTR key_value) {
 	HKEY desktop;								//公共用户桌面的名称
 	LPCTSTR lpsubkey = regPath;					//注册表子项的名称
