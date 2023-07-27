@@ -39,8 +39,6 @@ int main() {
 	TCHAR  openlinktruepath[HKEY_MAX_PATH] = { 0 };
 	Open_dir(findelpkeypath , exelinkfikename , openlinkfile);
 	if (SUCCEEDED(ResolveIt(NULL , openlinkfile , openlinktruepath , MAX_PATH))) {
-
-	
 	}
 	wprintf(L"找到真实地址为  %s \n" , openlinktruepath);
 	return 0;
