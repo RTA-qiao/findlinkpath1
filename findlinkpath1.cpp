@@ -79,9 +79,6 @@ HRESULT ResolveIt(HWND hwnd , LPTSTR lpszLinkFile , LPTSTR lpszPath , int iPathB
 		hres = psl->QueryInterface(IID_IPersistFile , (void**)&ppf);
 		if (SUCCEEDED(hres))
 		{
-
-			/*WCHAR wsz[MAX_PATH];
-			MultiByteToWideChar(CP_ACP , 0 , lpszLinkFile , -1 , wsz , MAX_PATH);*/
 			hres = ppf->Load(lpszLinkFile , STGM_READ);
 			if (SUCCEEDED(hres))
 			{
@@ -90,7 +87,6 @@ HRESULT ResolveIt(HWND hwnd , LPTSTR lpszLinkFile , LPTSTR lpszPath , int iPathB
 				{
 					hres = psl->GetPath(szGotPath , MAX_PATH , (WIN32_FIND_DATA*)&wfd , SLGP_SHORTPATH);
 					_tcscpy_s(lpszPath , _tcslen(szGotPath) + 2 , szGotPath);
-					//wprintf(L"path %s \n" , szGotPath);
 				}
 			}
 			ppf->Release();
