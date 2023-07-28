@@ -14,7 +14,6 @@
 HKEY rootHkey = HKEY_LOCAL_MACHINE;
 TCHAR child[HKEY_MAX_PATH] = L"SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
 TCHAR lpkeyname[] = L"Desktop";
-TCHAR exename[] = L"英雄联盟WeGame版.lnk";
 TCHAR exelinkfikename[] = L"你OBS Studio.lnk";
 /*找到子项为lpkeyname的名称*/
 BOOL findRegKey(HKEY rootHkey , LPTSTR regPath , LPTSTR lpkeyname , LPTSTR findkokeyname , LPTSTR key_value);
