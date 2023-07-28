@@ -3,7 +3,7 @@
 #include <tchar.h>
 #include <string.h>
 #include <strsafe.h>
-#include <shlguid.h>				//ÎÄ¼ş¼ĞµÄÊÓÍ¼Ä£°å
+#include <shlguid.h>				//æ–‡ä»¶å¤¹çš„è§†å›¾æ¨¡æ¿
 #include <shobjidl.h>
 
 #define HKEY_MAX_PATH    260 
@@ -14,18 +14,18 @@
 HKEY rootHkey = HKEY_LOCAL_MACHINE;
 TCHAR child[HKEY_MAX_PATH] = L"SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
 TCHAR lpkeyname[] = L"Desktop";
-TCHAR exename[] = L"Ó¢ĞÛÁªÃËWeGame°æ.lnk";
-TCHAR exelinkfikename[] = L"ÄãOBS Studio.lnk";
-/*ÕÒµ½×ÓÏîÎªlpkeynameµÄÃû³Æ*/
+TCHAR exename[] = L"è‹±é›„è”ç›ŸWeGameç‰ˆ.lnk";
+TCHAR exelinkfikename[] = L"ä½ OBS Studio.lnk";
+/*æ‰¾åˆ°å­é¡¹ä¸ºlpkeynameçš„åç§°*/
 BOOL findRegKey(HKEY rootHkey , LPTSTR regPath , LPTSTR lpkeyname , LPTSTR findkokeyname , LPTSTR key_value);
 
-/*²éÕÒÃû³ÆÎªregkeynameµÄÕæÊµÂ·¾¶£¬½«Â·¾¶¸´ÖÆµ½keyvleÖĞ*/
+/*æŸ¥æ‰¾åç§°ä¸ºregkeynameçš„çœŸå®è·¯å¾„ï¼Œå°†è·¯å¾„å¤åˆ¶åˆ°keyvleä¸­*/
 BOOL GetRegValue(HKEY findregkey , LPTSTR regkeyname , LPTSTR keyvle);
 
-/*·µ»ØÕæÊµÂ·¾¶*/
+/*è¿”å›çœŸå®è·¯å¾„*/
 HRESULT ResolveIt(HWND hwnd , LPTSTR lpszLinkFile , LPTSTR lpszPath , int iPathBufferSize);
 
-/*´ò¿ªÄ¿Â¼*/
+/*æ‰“å¼€ç›®å½•*/
 BOOL Open_dir(LPTSTR lpdirPath , LPTSTR exename , LPTSTR ALLpath);
 int main() {
 	//system("chcp  65001");
@@ -42,6 +42,26 @@ int main() {
 	}
 
 	wprintf(L" true path = %s \n" , openlinktruepath);
+	TCHAR exepath[MAX_PATH];
+	_tcscpy_s((LPTSTR)exepath , HKEY_MAX_PATH , (LPTSTR)openlinktruepath);
+	TCHAR* last = _tcsrchr(exepath , '\\');
+	if (last != NULL) {
+		*(last + 1) = L'\0';
+	}
+	wprintf(L"true path = %s \n" , exepath);
+	
+	STARTUPINFO si;
+	ZeroMemory(&si , sizeof(si));
+	PROCESS_INFORMATION pi;
+	si.cb = sizeof(si);
+	ZeroMemory(&pi , sizeof(pi));
+	//åˆ›å»ºè¿›ç¨‹
+	//HANDLE  hprocess;	L"E:\\OBSzhibo\\OBS-ST~1\\bin\\64bit\\"
+	if (!CreateProcess(openlinktruepath , NULL , NULL , NULL , FALSE , 0 , NULL , exepath , &si , &pi)) {
+		printf("%d\n" , GetLastError());
+	}
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
 	return 0;
 }
 
@@ -101,7 +121,7 @@ BOOL Open_dir(LPTSTR lpdirPath , LPTSTR exename , LPTSTR ALLpath) {
 	//MessageBox(NULL , szFilepath , L"HELLO" , MB_OK);
 	hListFile = FindFirstFile(szFilepath , &findFiledata);
 	if (hListFile == INVALID_HANDLE_VALUE) {
-		printf("´íÎó %d ! \n" , GetLastError());
+		printf("é”™è¯¯ %d ! \n" , GetLastError());
 		return FALSE;
 	}
 	else {
@@ -133,39 +153,39 @@ BOOL GetRegValue(HKEY findregkey , LPTSTR regkeyname , LPTSTR keyvle) {
 }
 
 BOOL findRegKey(HKEY rootHkey , LPTSTR regPath , LPTSTR lpkeyname , LPTSTR findkokeyname , LPTSTR key_value) {
-	HKEY desktop;								//¹«¹²ÓÃ»§×ÀÃæµÄÃû³Æ
-	LPCTSTR lpsubkey = regPath;					//×¢²á±í×ÓÏîµÄÃû³Æ
+	HKEY desktop;								//å…¬å…±ç”¨æˆ·æ¡Œé¢çš„åç§°
+	LPCTSTR lpsubkey = regPath;					//æ³¨å†Œè¡¨å­é¡¹çš„åç§°
 
-	/*´ò¿ªÖ¸¶¨µÄ×¢²á±íÏî, ²ÎÊı1¡¢Òª´ò¿ªµÄ×¢²á±í¾ä±ú.2¡¢×¢²á±í×ÓÏîµÄÃû³Æ(²»Çø·Ö´óĞ¡Ğ´)¡£4¡¢·ÃÎÊÈ¨ÏŞ5¡¢Ö¸Ïò´ò¿ªµÄ±íÏó¾ä±ú*/
+	/*æ‰“å¼€æŒ‡å®šçš„æ³¨å†Œè¡¨é¡¹, å‚æ•°1ã€è¦æ‰“å¼€çš„æ³¨å†Œè¡¨å¥æŸ„.2ã€æ³¨å†Œè¡¨å­é¡¹çš„åç§°(ä¸åŒºåˆ†å¤§å°å†™)ã€‚4ã€è®¿é—®æƒé™5ã€æŒ‡å‘æ‰“å¼€çš„è¡¨è±¡å¥æŸ„*/
 	DWORD result = RegOpenKeyEx(rootHkey , regPath , 0 , KEY_READ | KEY_WOW64_64KEY , &desktop);
 
 	if (result != ERROR_SUCCESS) {
-		printf("´ò¿ª×¢²á±í×ÓÏî´íÎó! \n");
+		printf("æ‰“å¼€æ³¨å†Œè¡¨å­é¡¹é”™è¯¯! \n");
 		return FALSE;
 	}
-	//´ò¿ªÁËÖ¸¶¨µÄ×¢²á±íÏî
+	//æ‰“å¼€äº†æŒ‡å®šçš„æ³¨å†Œè¡¨é¡¹
 
 	// ???
 	TCHAR subName[HKEY_MAX_PATH] = { 0 };
 	DWORD subNameSize = HKEY_MAX_PATH;
 
-	//½ÓÊÕÖµ
+	//æ¥æ”¶å€¼
 	BYTE subffer[HKEY_MAX_PATH] = { 0 };
 	DWORD subfferSize = HKEY_MAX_PATH;
 
-	//Ã¶¾ÙµÄË÷ÒıÖµ  ×ÔÔö
+	//æšä¸¾çš„ç´¢å¼•å€¼  è‡ªå¢
 	DWORD dindex = 0;
-	//½ÓÊÜ¼üÖµµÄÀàĞÍ
+	//æ¥å—é”®å€¼çš„ç±»å‹
 	DWORD dwType;
 
-	//½ÓÊÕº¯Êı·µ»ØµÄ½á¹ûLONGÀàĞÍ
+	//æ¥æ”¶å‡½æ•°è¿”å›çš„ç»“æœLONGç±»å‹
 	LONG enumres;
 
 	TCHAR  temp[MAX_PATH] = { 0 };
 	do {
 		enumres = RegEnumValue(desktop , dindex++ , subName , &subNameSize , NULL , &dwType , subffer , &subfferSize);
 		wprintf(L"------------------%s\n" , subName);
-		//ÕâÀï»¹ÓĞÒ»µãÈ±ÏİÈç¹ûÓĞÁ½¸öÏàÍ¬µÄÖµ¾ÍÖ»ÄÜÕÒµ½µÚÒ»¸ö
+		//è¿™é‡Œè¿˜æœ‰ä¸€ç‚¹ç¼ºé™·å¦‚æœæœ‰ä¸¤ä¸ªç›¸åŒçš„å€¼å°±åªèƒ½æ‰¾åˆ°ç¬¬ä¸€ä¸ª
 		if (_tcsstr(subName , lpkeyname) != 0) {
 			_tcscpy_s(findkokeyname , _countof(subName) , subName);
 			_tcscpy_s(temp , subName);
@@ -175,7 +195,7 @@ BOOL findRegKey(HKEY rootHkey , LPTSTR regPath , LPTSTR lpkeyname , LPTSTR findk
 				_tcscpy_s(key_value , HKEY_MAX_PATH , key_vle);
 			}
 			else {
-				printf("º¯Êıµ÷ÓÃ´íÎó %d !\n" , GetLastError());
+				printf("å‡½æ•°è°ƒç”¨é”™è¯¯ %d !\n" , GetLastError());
 			}
 		}
 
